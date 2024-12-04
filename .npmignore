@@ -1,0 +1,37 @@
+# Ignore testing directory and files
+src/
+
+# Ignore configuration files
+*.config.js
+*.config.ts
+tsconfig*.json
+
+# Ignore Git and editor-related files
+.git
+.gitignore
+.editorconfig
+
+# Ignore environment files
+.env
+.env.*
+
+# Ignore test files
+*.test.ts
+*.test.tsx
+
+# Ignore Storybook or example-related files (if added later)
+.storybook/
+stories/
+
+# Ignore build artifacts and node modules
+node_modules/
+dist/
+
+# Ignore logs
+*.log
+
+# Ignore temporary files
+*.temp
+*.tmp
+.DS_Store
+Thumbs.db

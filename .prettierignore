@@ -1,0 +1,19 @@
+# Ignore the build output
+dist/
+
+# Ignore node_modules
+node_modules/
+
+# Ignore configuration files
+# *.config.js
+# *.config.ts
+
+# Ignore test and story files
+*.test.ts
+*.test.tsx
+*.stories.tsx
+.storybook/
+
+# Ignore assets that don’t need formatting
+lib/assets/icons/*.svg
+lib/assets/styles/
