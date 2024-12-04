@@ -1,1 +1,1 @@
-export {} from "./swapColorValues";
+export { swapColorValues } from '@lib/utils/swapColorValues'

@@ -27,6 +27,8 @@ const config = {
     '^types$',
     '^@lib/types/(.*)$',
     '^@lib/(.*)$',
+    '^@lib/theme/(.*)$',
+    '^@lib/theme/colors(.*)$',
     '^@lib/utils/(.*)$',
     '^[./]',
   ],

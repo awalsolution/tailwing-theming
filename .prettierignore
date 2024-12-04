@@ -10,10 +10,3 @@ node_modules/
 
 # Ignore test and story files
 *.test.ts
-*.test.tsx
-*.stories.tsx
-.storybook/
-
-# Ignore assets that don’t need formatting
-lib/assets/icons/*.svg
-lib/assets/styles/
