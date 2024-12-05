@@ -1,23 +1,23 @@
-import { readableColor } from 'color2k'
-import { commonColors } from '@lib/theme/colors'
-import { swapColorValues } from '@lib/utils'
+import { readableColor } from "color2k";
+import { commonColors } from "./commonColors";
+import { swapColorValues } from "../utils/theme/swapColorValues";
 
 const base: Record<string, Theme> = {
   light: {
-    background: { DEFAULT: '#FFFFFF' },
-    foreground: { ...commonColors.zinc, DEFAULT: '#11181C' },
-    divider: { DEFAULT: 'rgba(17, 17, 17, 0.15)' },
+    background: { DEFAULT: "#FFFFFF" },
+    foreground: { ...commonColors.zinc, DEFAULT: "#11181C" },
+    divider: { DEFAULT: "rgba(17, 17, 17, 0.15)" },
     focus: { DEFAULT: commonColors.blue[500] },
-    overlay: { DEFAULT: '#000000' },
+    overlay: { DEFAULT: "#000000" },
   },
   dark: {
-    background: { DEFAULT: '#000000' },
-    foreground: { ...swapColorValues(commonColors.zinc), DEFAULT: '#ECEDEE' },
+    background: { DEFAULT: "#000000" },
+    foreground: { ...swapColorValues(commonColors.zinc), DEFAULT: "#ECEDEE" },
     focus: { DEFAULT: commonColors.blue[500] },
-    overlay: { DEFAULT: '#000000' },
-    divider: { DEFAULT: 'rgba(255, 255, 255, 0.15)' },
+    overlay: { DEFAULT: "#000000" },
+    divider: { DEFAULT: "rgba(255, 255, 255, 0.15)" },
   },
-}
+};
 
 const lightTheme: Theme = {
   ...base.light,
@@ -46,7 +46,7 @@ const lightTheme: Theme = {
     DEFAULT: commonColors.red[500],
     foreground: commonColors.white,
   },
-}
+};
 
 const darkTheme: Theme = {
   ...base.dark,
@@ -75,12 +75,12 @@ const darkTheme: Theme = {
     DEFAULT: commonColors.red[500],
     foreground: commonColors.white,
   },
-}
+};
 
 export const themes: ThemeConfig[] = [
   {
-    name: 'light',
-    selectors: [':root', '[data-theme="light"]'],
+    name: "light",
+    // selectors: [':root', '[data-theme="light"]'],
     extend: {
       colors: {
         ...lightTheme,
@@ -88,12 +88,12 @@ export const themes: ThemeConfig[] = [
     },
   },
   {
-    name: 'dark-theme',
-    selectors: ['.dark-theme', '[data-theme="dark"]'],
+    name: "dark-theme",
+    selectors: [".dark-theme", '[data-theme="dark"]'],
     extend: {
       colors: {
         ...darkTheme,
       },
     },
   },
-]
+];
