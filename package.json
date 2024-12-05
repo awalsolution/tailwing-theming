@@ -24,8 +24,8 @@
   "types": "dist/main.d.ts",
   "exports": {
     ".": {
-      "types": "./dist/theme/plugin/index.d.ts",
-      "default": "./dist/theme/plugin/index.js"
+      "types": "./dist/main.d.ts",
+      "default": "./dist/main.js"
     }
   },
   "files": [
