@@ -1,20 +1,7 @@
 import { ThemeManager } from '@lib/theme/plugin'
 import { Theme } from '@lib/theme/types'
 
-export const themeManager = new ThemeManager({
-  defaultTheme: 'light',
-  themes: [
-    {
-      name: 'custom-theme',
-      selectors: ['.custom-theme', '[data-theme="custom"'],
-      extend: {
-        colors: {
-          primary: { DEFAULT: '#555' },
-        },
-      },
-    },
-  ],
-})
+export const themeManager = new ThemeManager({})
 
 export const themes = themeManager.getThemes()
 export const currentTheme = themeManager.getCurrentTheme()

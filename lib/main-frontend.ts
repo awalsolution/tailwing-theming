@@ -1,8 +1,6 @@
 import '@lib/index.css'
-import { getCurrentTheme, themes } from '@lib/theme/theme'
+import { getCurrentTheme } from '@lib/theme/theme'
 import { storage } from '@lib/utils/storage'
-
-console.log('themes ==>', themes)
 
 let currentTheme = getCurrentTheme().name
 

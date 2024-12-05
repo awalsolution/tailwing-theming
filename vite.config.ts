@@ -11,6 +11,7 @@ export default defineConfig({
     dts({
       tsconfigPath: resolve(__dirname, 'tsconfig.json'),
       include: ['lib/'],
+      exclude: ['lib/**/*-frontend.ts', 'lib/utils/storage/*'],
     }),
   ],
   resolve: {
@@ -33,7 +34,7 @@ export default defineConfig({
       input: Object.fromEntries(
         glob
           .sync('lib/**/*.{ts,tsx}', {
-            ignore: ['lib/**/*.d.ts'],
+            ignore: ['lib/**/*.d.ts', 'lib/**/*-frontend.ts', 'lib/utils/storage/*'],
           })
           .map((file) => [
             relative('lib', file.slice(0, file.length - extname(file).length)),
