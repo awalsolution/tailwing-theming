@@ -1,4 +1,4 @@
-declare type Theme = {
+declare type ThemeOptions = {
   [key: string]: string | { [key: string]: string }
 }
 

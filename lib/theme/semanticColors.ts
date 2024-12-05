@@ -2,7 +2,7 @@ import { readableColor } from 'color2k'
 import { swapColorValues } from '../utils/theme/swapColorValues'
 import { commonColors } from './commonColors'
 
-const base: Record<string, Theme> = {
+const base: Record<string, ThemeOptions> = {
   light: {
     background: { DEFAULT: '#FFFFFF' },
     foreground: { ...commonColors.zinc, DEFAULT: '#11181C' },
@@ -19,7 +19,7 @@ const base: Record<string, Theme> = {
   },
 }
 
-const lightTheme: Theme = {
+const lightTheme: ThemeOptions = {
   ...base.light,
   primary: {
     ...commonColors.blue,
@@ -48,7 +48,7 @@ const lightTheme: Theme = {
   },
 }
 
-const darkTheme: Theme = {
+const darkTheme: ThemeOptions = {
   ...base.dark,
   primary: {
     ...swapColorValues(commonColors.blue),

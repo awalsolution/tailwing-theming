@@ -60,7 +60,7 @@ const addThemeStyles = (themes: ThemeConfig[], api: PluginAPI): void => {
   }
 }
 
-const multiThemePlugin = plugin.withOptions(
+const themePlugin = plugin.withOptions<void>(
   () => (api) => {
     const themes = getThemesFromOptions(defaultOptions)
     addThemeVariants(themes, api)
@@ -76,4 +76,4 @@ const multiThemePlugin = plugin.withOptions(
   },
 )
 
-export { multiThemePlugin }
+export { themePlugin }

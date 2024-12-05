@@ -1,9 +1,9 @@
 import type { Config } from 'tailwindcss'
-import { multiThemePlugin } from './lib/theme/plugin/themePlugin'
+import { themePlugin } from './lib/theme/plugin/themePlugin'
 
 export default {
   content: ['./index.html', './lib/**/*.{ts,tsx}'],
-  darkMode: 'selector',
+  darkMode: 'media',
   theme: {},
-  plugins: [multiThemePlugin({})],
+  plugins: [themePlugin()],
 } satisfies Config

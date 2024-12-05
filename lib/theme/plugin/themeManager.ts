@@ -1,17 +1,5 @@
 import { themes as defaultThemes } from '../semanticColors'
-
-type Theme = {
-  name: string
-  selectors?: string[]
-  extend: {
-    colors: Record<string, any>
-  }
-}
-
-interface ThemeManagerOptions {
-  themes?: Theme[]
-  defaultTheme?: string
-}
+import { Theme, ThemeManagerOptions } from '../types'
 
 export class ThemeManager {
   public currentTheme: Theme
@@ -21,7 +9,7 @@ export class ThemeManager {
     this.themes = new Map([...defaultThemes, ...themes].map((theme) => [theme.name, theme]))
 
     const initialThemeName = defaultTheme
-    const initialTheme = this.themes.get(initialThemeName) || defaultThemes[0] // Fallback to the first default theme
+    const initialTheme = this.themes.get(initialThemeName) || defaultThemes[0]
     this.currentTheme = initialTheme
   }
 

@@ -21,11 +21,11 @@
     "ui",
     "design"
   ],
-  "types": "dist/index.d.ts",
+  "types": "dist/main.d.ts",
   "exports": {
     ".": {
-      "types": "./dist/lib/index.d.ts",
-      "default": "./dist/index.js"
+      "types": "./dist/theme/plugin/index.d.ts",
+      "default": "./dist/theme/plugin/index.js"
     }
   },
   "files": [
