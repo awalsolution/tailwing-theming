@@ -1,30 +1,28 @@
-import { themes as defaultThemes } from "../semanticColors";
+import { themes as defaultThemes } from '../semanticColors'
 
 type Theme = {
-  name: string;
-  selectors?: string[];
+  name: string
+  selectors?: string[]
   extend: {
-    colors: Record<string, any>;
-  };
-};
+    colors: Record<string, any>
+  }
+}
 
 interface ThemeManagerOptions {
-  themes?: Theme[];
-  defaultTheme?: string;
+  themes?: Theme[]
+  defaultTheme?: string
 }
 
 export class ThemeManager {
-  public currentTheme: Theme;
-  private themes: Map<string, Theme>;
+  public currentTheme: Theme
+  private themes: Map<string, Theme>
 
-  constructor({ themes = [], defaultTheme = "light" }: ThemeManagerOptions) {
-    this.themes = new Map(
-      [...defaultThemes, ...themes].map((theme) => [theme.name, theme])
-    );
+  constructor({ themes = [], defaultTheme = 'light' }: ThemeManagerOptions) {
+    this.themes = new Map([...defaultThemes, ...themes].map((theme) => [theme.name, theme]))
 
-    const initialThemeName = defaultTheme;
-    const initialTheme = this.themes.get(initialThemeName) || defaultThemes[0]; // Fallback to the first default theme
-    this.currentTheme = initialTheme;
+    const initialThemeName = defaultTheme
+    const initialTheme = this.themes.get(initialThemeName) || defaultThemes[0] // Fallback to the first default theme
+    this.currentTheme = initialTheme
   }
 
   /**
@@ -34,10 +32,10 @@ export class ThemeManager {
 
   public addTheme(theme: Theme): void {
     if (this.themes.has(theme.name)) {
-      console.warn(`Theme "${theme.name}" already exists. It will be updated.`);
-      this.updateTheme(theme.name, theme);
+      console.warn(`Theme "${theme.name}" already exists. It will be updated.`)
+      this.updateTheme(theme.name, theme)
     } else {
-      this.themes.set(theme.name, theme);
+      this.themes.set(theme.name, theme)
     }
   }
 
@@ -48,11 +46,11 @@ export class ThemeManager {
 
   public removeTheme(themeName: string): void {
     if (!this.themes.has(themeName)) {
-      console.warn(`Theme "${themeName}" does not exist.`);
-      return;
+      console.warn(`Theme "${themeName}" does not exist.`)
+      return
     }
 
-    this.themes.delete(themeName);
+    this.themes.delete(themeName)
   }
 
   /**
@@ -62,13 +60,13 @@ export class ThemeManager {
    */
 
   public updateTheme(themeName: string, properties: Partial<Theme>): void {
-    const theme = this.themes.get(themeName);
+    const theme = this.themes.get(themeName)
     if (!theme) {
-      throw new Error(`Theme "${themeName}" does not exist.`);
+      throw new Error(`Theme "${themeName}" does not exist.`)
     }
 
-    const updatedTheme = { ...theme, ...properties };
-    this.themes.set(themeName, updatedTheme);
+    const updatedTheme = { ...theme, ...properties }
+    this.themes.set(themeName, updatedTheme)
   }
 
   /**
@@ -77,7 +75,7 @@ export class ThemeManager {
    */
 
   public getThemes(): Theme[] {
-    return Array.from(this.themes.values());
+    return Array.from(this.themes.values())
   }
 
   /**
@@ -86,8 +84,8 @@ export class ThemeManager {
    */
 
   public getCurrentTheme(): Theme {
-    return this.currentTheme;
+    return this.currentTheme
   }
 }
 
-export default ThemeManager;
+export default ThemeManager
