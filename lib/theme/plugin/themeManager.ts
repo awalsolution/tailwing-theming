@@ -1,7 +1,7 @@
 import { themes as defaultThemes } from '../semanticColors'
-import { Theme, ThemeManagerOptions } from '../types'
+import { MultiThemePluginOptions, Theme, ThemeManagerOptions } from '../types'
 
-export class ThemeManager {
+class ThemeManager {
   public currentTheme: Theme
   private themes: Map<string, Theme>
 
@@ -19,6 +19,7 @@ export class ThemeManager {
    */
 
   public addTheme(theme: Theme): void {
+    console.log('new theme==>', theme)
     if (this.themes.has(theme.name)) {
       console.warn(`Theme "${theme.name}" already exists. It will be updated.`)
       this.updateTheme(theme.name, theme)
@@ -62,8 +63,13 @@ export class ThemeManager {
    * @returns An array of themes
    */
 
-  public getThemes(): Theme[] {
-    return Array.from(this.themes.values())
+  public getThemes(): MultiThemePluginOptions {
+    const themes = Array.from(this.themes.values())
+    const defaultOptions: MultiThemePluginOptions = {
+      defaultTheme: themes.find((theme) => theme.name === 'light') || themes[0],
+      themes: themes.filter((theme) => theme.name !== 'light'),
+    }
+    return defaultOptions
   }
 
   /**
@@ -76,4 +82,6 @@ export class ThemeManager {
   }
 }
 
-export default ThemeManager
+const themeManager = new ThemeManager({ defaultTheme: 'light', themes: defaultThemes })
+
+export { ThemeManager, themeManager }

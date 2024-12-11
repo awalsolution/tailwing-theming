@@ -1,8 +1,21 @@
 import '@lib/index.css'
-import { getCurrentTheme } from '@lib/theme/theme'
+import { themeManager } from '@lib/theme/plugin'
 import { storage } from '@lib/utils/storage'
 
-let currentTheme = getCurrentTheme().name
+let currentTheme = themeManager.getCurrentTheme().name
+
+themeManager.addTheme({
+  name: 'custom',
+  extend: {
+    colors: {
+      background: { DEFAULT: '#555' },
+    },
+  },
+  selectors: ['custom', '[data-theme="custom"]'],
+})
+
+export const themes = themeManager.getThemes()
+console.log('themes==>', themes)
 
 const initializeApp = () => {
   const root = document.documentElement
@@ -11,8 +24,8 @@ const initializeApp = () => {
   const savedTheme = storage.get<string>('APP_THEME') || systemTheme
   currentTheme = savedTheme
 
-  root.className = savedTheme
-  root.setAttribute('data-theme', savedTheme)
+  root.className = 'umer'
+  root.setAttribute('data-theme', 'umer')
   storage.set('APP_THEME', savedTheme)
 }
 

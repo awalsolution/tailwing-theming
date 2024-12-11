@@ -1,14 +1,15 @@
-import { ThemeManager } from '@lib/theme/plugin'
-import { Theme } from '@lib/theme/types'
+import { ThemeManager } from './plugin'
+import { Theme } from './types'
 
-export const themeManager = new ThemeManager({})
+const themeManager = new ThemeManager({})
 
-export const themes = themeManager.getThemes()
-export const currentTheme = themeManager.getCurrentTheme()
-export const addTheme = (theme: Theme): void => themeManager.addTheme(theme)
-export const removeTheme = (themeName: string): void => themeManager.removeTheme(themeName)
-export const updateTheme = (themeName: string, properties: Partial<Theme>): void =>
-  themeManager.updateTheme(themeName, properties)
-export const getCurrentTheme = () => {
+const themes = themeManager.getThemes()
+const currentTheme = themeManager.getCurrentTheme()
+const addTheme = (theme: Theme): void => themeManager.addTheme(theme)
+const removeTheme = (themeName: string): void => themeManager.removeTheme(themeName)
+const updateTheme = (themeName: string, properties: Partial<Theme>): void => themeManager.updateTheme(themeName, properties)
+const getCurrentTheme = () => {
   return themeManager.getCurrentTheme()
 }
+
+export { themeManager, themes, currentTheme, addTheme, removeTheme, updateTheme, getCurrentTheme }

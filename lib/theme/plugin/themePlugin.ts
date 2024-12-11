@@ -1,16 +1,18 @@
 import plugin from 'tailwindcss/plugin'
 import { PluginAPI } from 'tailwindcss/types/config'
-import { MultiThemePluginOptions, defaultThemeName, getThemesFromOptions } from '../../utils/options'
+import { defaultThemeName, getThemesFromOptions } from '../../utils/options'
 import { resolveThemeExtensionAsCustomProps, resolveThemeExtensionsAsTailwindExtension } from '../../utils/theme/themeUtils'
-import { ThemeManager } from './themeManager'
+import { MultiThemePluginOptions } from '../types'
+import { themeManager } from './themeManager'
 
-const themeManager = new ThemeManager({})
-const themes = themeManager.getThemes()
+// const themes = themeManager.getThemes()
 
-const defaultOptions: MultiThemePluginOptions = {
-  defaultTheme: themes.find((theme) => theme.name === themeManager.getCurrentTheme().name),
-  themes: themes,
-}
+// const defaultOptions: MultiThemePluginOptions = {
+//   defaultTheme: themes.find((theme) => theme.name === 'light') || themes[0],
+//   themes: themes.filter((theme) => theme.name !== 'light'),
+// }
+
+// console.log('defaultOptions ==>', defaultOptions)
 
 /**
  * @param themes the themes to add as variants
@@ -60,14 +62,15 @@ const addThemeStyles = (themes: ThemeConfig[], api: PluginAPI): void => {
   }
 }
 
-const themePlugin = plugin.withOptions<void>(
-  () => (api) => {
-    const themes = getThemesFromOptions(defaultOptions)
+const themePlugin = plugin.withOptions<Partial<MultiThemePluginOptions>>(
+  (options) => (api) => {
+    const themes = getThemesFromOptions(options)
     addThemeVariants(themes, api)
     addThemeStyles(themes, api)
   },
-  () => {
-    const extension = resolveThemeExtensionsAsTailwindExtension(getThemesFromOptions(defaultOptions))
+  (options) => {
+    console.log('Plugin Themes ==>', options)
+    const extension = resolveThemeExtensionsAsTailwindExtension(getThemesFromOptions(options))
     return {
       theme: {
         extend: extension,
@@ -76,4 +79,4 @@ const themePlugin = plugin.withOptions<void>(
   },
 )
 
-export { themePlugin }
+export { themePlugin, themeManager }

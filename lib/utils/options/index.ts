@@ -1,11 +1,5 @@
 import unique from 'just-unique'
-
-export type DefaultThemeConfig = Omit<ThemeConfig, 'name' | 'selectors' | 'mediaQuery'>
-
-export interface MultiThemePluginOptions {
-  defaultTheme?: DefaultThemeConfig
-  themes?: ThemeConfig[]
-}
+import { MultiThemePluginOptions } from '../../theme/types'
 
 export const defaultThemeName = '__default'
 

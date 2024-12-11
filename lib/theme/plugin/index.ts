@@ -1,2 +1,2 @@
-export { ThemeManager } from '@lib/theme/plugin/themeManager'
-export { themePlugin } from '@lib/theme/plugin/themePlugin'
+export { themeManager } from './themeManager'
+export { themePlugin } from './themePlugin'
