@@ -80,7 +80,6 @@ const darkTheme: ThemeOptions = {
 export const themes: ThemeConfig[] = [
   {
     name: 'light',
-    // selectors: [':root', '[data-theme="light"]'],
     extend: {
       colors: {
         ...lightTheme,
@@ -88,8 +87,7 @@ export const themes: ThemeConfig[] = [
     },
   },
   {
-    name: 'dark-theme',
-    selectors: ['.dark-theme', '[data-theme="dark"]'],
+    name: 'dark',
     extend: {
       colors: {
         ...darkTheme,

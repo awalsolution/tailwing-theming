@@ -1,45 +1,38 @@
 import '@lib/index.css'
-import { themeManager } from '@lib/theme/plugin'
+import { themeManager } from '@lib/theming'
 import { storage } from '@lib/utils/storage'
 
-let currentTheme = themeManager.getCurrentTheme().name
-
-themeManager.addTheme({
-  name: 'custom',
-  extend: {
-    colors: {
-      background: { DEFAULT: '#555' },
-    },
-  },
-  selectors: ['custom', '[data-theme="custom"]'],
-})
-
-export const themes = themeManager.getThemes()
-console.log('themes==>', themes)
+let themeNames = themeManager.getAvailableThemes()
+let currentTheme = storage.get<string>('APP_THEME') ?? themeNames[Object.keys(themeNames)[1]].name
 
 const initializeApp = () => {
   const root = document.documentElement
 
-  const systemTheme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark-theme' : 'light'
-  const savedTheme = storage.get<string>('APP_THEME') || systemTheme
-  currentTheme = savedTheme
-
-  root.className = 'umer'
-  root.setAttribute('data-theme', 'umer')
-  storage.set('APP_THEME', savedTheme)
+  // Apply the saved theme or system theme as default
+  root.className = currentTheme
+  root.setAttribute('data-theme', currentTheme)
+  storage.set('APP_THEME', currentTheme)
 }
 
 const toggleTheme = () => {
   const root = document.documentElement
-  currentTheme = currentTheme === 'dark-theme' ? 'light' : 'dark-theme'
+  const themeKeys = Object.keys(themeNames)
+  const currentIndex = themeKeys.findIndex((key) => themeNames[key].name === currentTheme)
 
+  // Determine the next theme
+  const nextIndex = (currentIndex + 1) % themeKeys.length
+  currentTheme = themeNames[themeKeys[nextIndex]].name
+
+  // Apply the new theme
   root.className = currentTheme
   root.setAttribute('data-theme', currentTheme)
   storage.set('APP_THEME', currentTheme)
 
+  // Update button text to show the next theme
   const button = document.querySelector<HTMLButtonElement>('#theme-toggle')
   if (button) {
-    button.textContent = `Switch to ${currentTheme === 'light' ? 'Dark' : 'Light'} Mode`
+    const nextTheme = themeKeys[(nextIndex + 1) % themeKeys.length]
+    button.textContent = `Switch to ${nextTheme.charAt(0).toUpperCase() + nextTheme.slice(1)} Mode`
   }
 }
 
@@ -50,7 +43,7 @@ const renderApp = () => {
   app.innerHTML = `
     <div class="min-h-screen flex gap-4 items-center justify-center bg-background text-foreground">
       <button id="theme-toggle" class="px-4 py-2 bg-primary text-white rounded">
-        Switch to ${currentTheme === 'light' ? 'Dark' : 'Light'} Mode
+        Switch to ${Object.keys(themeNames)[0]} Mode
       </button>
       <h1 class="border-b border-divider">
         Hello, TailwindCSS Theme Toggling!
@@ -65,6 +58,5 @@ const renderApp = () => {
   }
 }
 
-// Initialize the application and render it
 initializeApp()
 renderApp()

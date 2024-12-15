@@ -1,28 +1,31 @@
-import { ThemeManager } from '../theme/plugin/themeManager'
+// import { themes } from '../theme/semanticColors'
+import { ThemeManager } from '../theme/themeManager'
 
 const themeManager = new ThemeManager({
+  defaultTheme: '',
   themes: [
     {
-      name: 'custom',
+      name: 'light',
       extend: {
         colors: {
-          background: { DEFAULT: '#555' },
+          background: { DEFAULT: 'white' },
+          foreground: { DEFAULT: 'black' },
+          primary: { DEFAULT: 'blue' },
         },
       },
-      selectors: ['custom', '[data-theme="custom"]'],
+    },
+    {
+      name: 'dark',
+      extend: {
+        colors: {
+          background: { DEFAULT: 'black' },
+          foreground: { DEFAULT: 'white' },
+          primary: { DEFAULT: 'purple' },
+        },
+      },
     },
   ],
 })
 
-themeManager.addTheme({
-  name: 'umer',
-  extend: {
-    colors: {
-      background: { DEFAULT: 'green' },
-      primary: { DEFAULT: 'red' },
-    },
-  },
-  selectors: ['umer', '[data-theme="umer"]'],
-})
-
-export const customTheme = themeManager.getThemes()
+const customTheme = themeManager.getThemes()
+export { themeManager, customTheme }

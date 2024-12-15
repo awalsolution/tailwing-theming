@@ -3,16 +3,6 @@ import { PluginAPI } from 'tailwindcss/types/config'
 import { defaultThemeName, getThemesFromOptions } from '../../utils/options'
 import { resolveThemeExtensionAsCustomProps, resolveThemeExtensionsAsTailwindExtension } from '../../utils/theme/themeUtils'
 import { MultiThemePluginOptions } from '../types'
-import { themeManager } from './themeManager'
-
-// const themes = themeManager.getThemes()
-
-// const defaultOptions: MultiThemePluginOptions = {
-//   defaultTheme: themes.find((theme) => theme.name === 'light') || themes[0],
-//   themes: themes.filter((theme) => theme.name !== 'light'),
-// }
-
-// console.log('defaultOptions ==>', defaultOptions)
 
 /**
  * @param themes the themes to add as variants
@@ -79,4 +69,4 @@ const themePlugin = plugin.withOptions<Partial<MultiThemePluginOptions>>(
   },
 )
 
-export { themePlugin, themeManager }
+export { themePlugin }
