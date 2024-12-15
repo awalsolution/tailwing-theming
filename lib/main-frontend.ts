@@ -3,7 +3,7 @@ import { themeManager } from '@lib/theming'
 import { storage } from '@lib/utils/storage'
 
 let themeNames = themeManager.getAvailableThemes()
-let currentTheme = storage.get<string>('APP_THEME') ?? themeNames[Object.keys(themeNames)[1]].name
+let currentTheme = storage.get<string>('APP_THEME') ?? Object.keys(themeNames)[0]
 
 const initializeApp = () => {
   const root = document.documentElement
@@ -17,11 +17,11 @@ const initializeApp = () => {
 const toggleTheme = () => {
   const root = document.documentElement
   const themeKeys = Object.keys(themeNames)
-  const currentIndex = themeKeys.findIndex((key) => themeNames[key].name === currentTheme)
+  const currentIndex = themeKeys.findIndex((key) => key === currentTheme)
 
   // Determine the next theme
   const nextIndex = (currentIndex + 1) % themeKeys.length
-  currentTheme = themeNames[themeKeys[nextIndex]].name
+  currentTheme = themeKeys[nextIndex]
 
   // Apply the new theme
   root.className = currentTheme
@@ -31,7 +31,7 @@ const toggleTheme = () => {
   // Update button text to show the next theme
   const button = document.querySelector<HTMLButtonElement>('#theme-toggle')
   if (button) {
-    const nextTheme = themeKeys[(nextIndex + 1) % themeKeys.length]
+    const nextTheme = themeNames[themeKeys[(nextIndex + 1) % themeKeys.length]].name
     button.textContent = `Switch to ${nextTheme.charAt(0).toUpperCase() + nextTheme.slice(1)} Mode`
   }
 }

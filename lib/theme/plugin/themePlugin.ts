@@ -2,7 +2,7 @@ import plugin from 'tailwindcss/plugin'
 import { PluginAPI } from 'tailwindcss/types/config'
 import { defaultThemeName, getThemesFromOptions } from '../../utils/options'
 import { resolveThemeExtensionAsCustomProps, resolveThemeExtensionsAsTailwindExtension } from '../../utils/theme/themeUtils'
-import { MultiThemePluginOptions } from '../types'
+import { MultiThemePluginOptions, ThemeConfig } from '../types'
 
 /**
  * @param themes the themes to add as variants
