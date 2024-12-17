@@ -1,5 +1,5 @@
 import unique from 'just-unique'
-import { MultiThemePluginOptions, ThemeConfig } from '../../theme/types'
+import { MultiThemePluginOptions, ThemeConfig } from '../../types'
 
 export const defaultThemeName = '__default'
 

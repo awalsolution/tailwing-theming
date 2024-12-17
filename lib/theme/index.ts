@@ -6,7 +6,7 @@ import {
   MultiThemePluginOptions,
   ThemeConfig,
   ThemeManagerType,
-} from './types'
+} from '../types'
 
 class ThemeManager {
   private default: DefaultThemeName
@@ -49,14 +49,13 @@ class ThemeManager {
       .map((theme) => ({
         ...theme,
         name: theme.name,
-        selectors: [`${theme.name}`, `[data-theme="${theme.name}"]`],
+        selectors: [`[data-theme="${theme.name}"]`],
       }))
 
     this.themes = {
       defaultTheme: defaultThemeObject,
       themes: processedThemes,
     }
-    console.log('themes ==>', this.themes)
   }
 
   /**
@@ -64,7 +63,7 @@ class ThemeManager {
    * @param themeName - The theme name to find
    */
 
-  private findTheme(themeName: DefaultThemeName): DefaultThemeConfig | ThemeConfig | null {
+  private find(themeName: DefaultThemeName): DefaultThemeConfig | ThemeConfig | null {
     const checkDefault = this.default === themeName && this.themes['defaultTheme']
     const checkThemes = this.themes['themes']?.find((t) => t.name === themeName)
     return checkDefault || checkThemes || null
@@ -75,8 +74,22 @@ class ThemeManager {
    * @returns MultiThemePluginOptions containing the default theme and additional themes.
    */
 
-  public getThemes(): MultiThemePluginOptions {
+  public get(): MultiThemePluginOptions {
     return this.themes
+  }
+
+  /**
+   * Get available themes with their names and selectors.
+   * @returns An object of available themes
+   */
+
+  public getThemeSelectors(): Record<string, { name: string; selectors?: string[] }> {
+    const availableThemes: Record<string, { name: string; selectors?: string[] }> = {}
+    availableThemes['default'] = { name: this.default ?? '' }
+    this.themes.themes?.forEach((theme) => {
+      availableThemes[theme.name] = { name: theme.name, selectors: theme.selectors }
+    })
+    return availableThemes
   }
 
   /**
@@ -84,31 +97,20 @@ class ThemeManager {
    * @param theme - The theme to add
    */
 
-  public addTheme(theme: AddThemeType): void {
-    const find = this.findTheme(theme.name)
+  public add(theme: AddThemeType): void {
+    if (!theme.name.match(/theme$/i)) {
+      throw new Error('Object keys must contain -theme suffix')
+    }
+    const find = this.find(theme.name)
     if (find) {
       throw new Error(`Theme "${theme.name}" already exists.`)
     }
     const newTheme: ThemeConfig = {
       name: theme.name,
-      selectors: theme.selectors,
-      mediaQuery: theme.mediaQuery,
+      selectors: [`[data-theme="${theme.name}"]`],
       extend: { ...theme.theme },
     }
     this.themes.themes?.push(newTheme)
-  }
-
-  /**
-   * Remove a theme by name.
-   * @param themeName - The name of the theme to remove
-   */
-  public removeTheme(themeName: DefaultThemeName): void {
-    const index = this.themes.themes?.findIndex((t) => t.name === themeName)
-    if (index === undefined || index === -1) {
-      console.warn(`Theme "${themeName}" does not exist.`)
-      return
-    }
-    this.themes.themes?.splice(index, 1)
   }
 
   /**
@@ -116,32 +118,47 @@ class ThemeManager {
    * @param themeName - The name of the theme to update
    * @param properties - The properties to update
    */
-  public updateTheme(themeName: string, properties: Partial<TailwindExtension>): void {
+
+  public update(themeName: string, properties: Partial<TailwindExtension>): void {
+    if (!themeName.match(/theme$/i)) {
+      throw new Error('Object keys must contain -theme suffix')
+    }
+    const find = this.find(themeName)
+    if (!find) {
+      throw new Error(`Theme "${themeName}" does not exist.`)
+    }
+
     if (themeName === this.default) {
       this.themes.defaultTheme = {
         ...this.themes.defaultTheme,
-        extend: { ...this.themes.defaultTheme?.extend, ...properties },
+        extend: {
+          ...this.themes.defaultTheme?.extend,
+          ...properties,
+        },
       }
     } else {
-      const theme = this.themes.themes?.find((t) => t.name === themeName)
-      if (!theme) {
-        throw new Error(`Theme "${themeName}" does not exist.`)
-      }
-      theme.extend = { ...theme.extend, ...properties }
+      this.themes.themes?.forEach((t) => {
+        if (t.name === themeName) {
+          t.extend = {
+            ...t.extend,
+            ...properties,
+          }
+        }
+      })
     }
   }
 
   /**
-   * Get available themes with their names and selectors.
-   * @returns An object of available themes
+   * Remove a theme by name.
+   * @param themeName - The name of the theme to remove
    */
-  public getAvailableThemes(): Record<string, { name: string; selectors?: string[] }> {
-    const availableThemes: Record<string, { name: string; selectors?: string[] }> = {}
-    availableThemes['default'] = { name: this.default ?? '' }
-    this.themes.themes?.forEach((theme) => {
-      availableThemes[theme.name] = { name: theme.name, selectors: theme.selectors }
-    })
-    return availableThemes
+
+  public remove(themeName: DefaultThemeName): void {
+    const index = this.themes.themes?.findIndex((t) => t.name === themeName)
+    if (index === undefined || index === -1) {
+      throw new Error(`Theme "${themeName}" does not exist.`)
+    }
+    this.themes.themes?.splice(index, 1)
   }
 }
 

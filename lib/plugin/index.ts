@@ -1,8 +1,8 @@
 import plugin from 'tailwindcss/plugin'
 import { PluginAPI } from 'tailwindcss/types/config'
-import { defaultThemeName, getThemesFromOptions } from '../../utils/options'
-import { resolveThemeExtensionAsCustomProps, resolveThemeExtensionsAsTailwindExtension } from '../../utils/theme/themeUtils'
 import { MultiThemePluginOptions, ThemeConfig } from '../types'
+import { defaultThemeName, getThemesFromOptions } from '../utils/options'
+import { resolveThemeExtensionAsCustomProps, resolveThemeExtensionsAsTailwindExtension } from '../utils/theme/themeUtils'
 
 /**
  * @param themes the themes to add as variants
@@ -59,7 +59,6 @@ const themePlugin = plugin.withOptions<Partial<MultiThemePluginOptions>>(
     addThemeStyles(themes, api)
   },
   (options) => {
-    console.log('Plugin Themes ==>', options)
     const extension = resolveThemeExtensionsAsTailwindExtension(getThemesFromOptions(options))
     return {
       theme: {

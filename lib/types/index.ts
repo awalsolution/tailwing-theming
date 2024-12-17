@@ -1,4 +1,4 @@
-import { TailwindExtension } from '@lib/config'
+import { TailwindExtension } from '../config'
 
 export type DefaultThemeConfig = Omit<ThemeConfig, 'name' | 'selectors' | 'mediaQuery'>
 
@@ -16,8 +16,6 @@ export interface MultiThemePluginOptions {
 
 export interface AddThemeType {
   name: string
-  mediaQuery?: string
-  selectors: string[]
   theme: TailwindExtension
 }
 
