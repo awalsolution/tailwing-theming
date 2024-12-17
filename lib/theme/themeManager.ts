@@ -49,13 +49,14 @@ class ThemeManager {
       .map((theme) => ({
         ...theme,
         name: theme.name,
-        selectors: [`${theme.name}-theme`, `[data-theme="${theme.name}-theme"]`],
+        selectors: [`${theme.name}`, `[data-theme="${theme.name}"]`],
       }))
 
     this.themes = {
       defaultTheme: defaultThemeObject,
       themes: processedThemes,
     }
+    console.log('themes ==>', this.themes)
   }
 
   /**
@@ -63,7 +64,7 @@ class ThemeManager {
    * @param themeName - The theme name to find
    */
 
-  public findTheme(themeName: DefaultThemeName): DefaultThemeConfig | ThemeConfig | null {
+  private findTheme(themeName: DefaultThemeName): DefaultThemeConfig | ThemeConfig | null {
     const checkDefault = this.default === themeName && this.themes['defaultTheme']
     const checkThemes = this.themes['themes']?.find((t) => t.name === themeName)
     return checkDefault || checkThemes || null
@@ -82,6 +83,7 @@ class ThemeManager {
    * Add a new theme.
    * @param theme - The theme to add
    */
+
   public addTheme(theme: AddThemeType): void {
     const find = this.findTheme(theme.name)
     if (find) {

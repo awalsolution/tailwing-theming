@@ -20,9 +20,9 @@ const themeManager = new ThemeManager({
     },
     purpleTheme: {
       colors: {
-        background: { DEFAULT: 'black' },
+        background: { DEFAULT: 'purple' },
         foreground: { DEFAULT: 'white' },
-        primary: { DEFAULT: 'purple' },
+        primary: { DEFAULT: 'red' },
       },
     },
   },
