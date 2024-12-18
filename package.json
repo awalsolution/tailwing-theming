@@ -1,6 +1,6 @@
 {
-  "name": "tailwind-theming",
-  "version": "0.0.0",
+  "name": "@awal-solution/tailwind-theming",
+  "version": "0.0.1",
   "type": "module",
   "author": {
     "name": "Muneeb Mughal",
