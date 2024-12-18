@@ -22,16 +22,7 @@ const config = {
 
   // Import sorting options
   importOrderSortSpecifiers: true,
-  importOrder: [
-    '<THIRD_PARTY_MODULES>',
-    '^types$',
-    '^@lib/types/(.*)$',
-    '^@lib/(.*)$',
-    '^@lib/theme/(.*)$',
-    '^@lib/theme/colors(.*)$',
-    '^@lib/utils/(.*)$',
-    '^[./]',
-  ],
+  importOrder: ['<THIRD_PARTY_MODULES>', '^types$', '^[./]'],
 }
 
 export default config

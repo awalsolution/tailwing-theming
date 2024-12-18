@@ -3,6 +3,7 @@ import merge from 'lodash.merge'
 import mergeWith from 'lodash.mergewith'
 import { PluginAPI } from 'tailwindcss/types/config'
 import { ResolutionCallback, TailwindExtension } from '../../config'
+import { ThemeConfig } from '../../types'
 import { asCustomProp, toCustomPropName, toCustomPropValue } from '../options/customPropUtils'
 
 /**

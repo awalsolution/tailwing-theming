@@ -1,6 +1,6 @@
 {
-  "name": "tailwind-theming",
-  "version": "0.0.0",
+  "name": "@awal-solution/tailwind-theming",
+  "version": "0.0.1",
   "type": "module",
   "author": {
     "name": "Muneeb Mughal",
@@ -33,30 +33,35 @@
   ],
   "scripts": {
     "dev": "vite",
-    "lint": "eslint .",
     "preview": "vite preview",
     "build": "tsc && vite build",
-    "prettier:fix": "npx prettier --write ./"
+    "lint": "eslint .",
+    "prettier:fix": "npx prettier --write ./",
+    "lint:fix": "eslint . --fix"
   },
   "devDependencies": {
+    "@eslint/js": "^9.17.0",
     "@trivago/prettier-plugin-sort-imports": "^4.3.0",
     "@types/color": "^4.2.0",
     "@types/lodash": "^4.17.13",
     "@types/lodash.merge": "^4.6.9",
     "@types/lodash.mergewith": "^4.6.9",
     "@types/node": "^22.10.1",
-    "autoprefixer": "^10.4.20",
+    "@typescript-eslint/eslint-plugin": "^8.18.1",
+    "@typescript-eslint/parser": "^8.18.1",
+    "eslint": "^9.17.0",
+    "eslint-config-prettier": "^9.1.0",
+    "eslint-plugin-prettier": "^5.2.1",
     "glob": "^11.0.0",
-    "postcss": "^8.4.49",
     "prettier": "^3.4.2",
     "tailwindcss": "^3.4.16",
     "typescript": "~5.6.2",
+    "typescript-eslint": "^8.18.1",
     "vite": "^6.0.1",
     "vite-plugin-dts": "^4.3.0"
   },
   "dependencies": {
     "color": "^4.2.3",
-    "color2k": "^2.0.3",
     "just-unique": "^4.2.0",
     "lodash.merge": "^4.6.2",
     "lodash.mergewith": "^4.6.2"

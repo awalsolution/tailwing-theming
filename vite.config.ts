@@ -1,5 +1,4 @@
 import { glob } from 'glob'
-import path from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { extname, relative, resolve } from 'path'
 import { defineConfig } from 'vite'
@@ -14,14 +13,6 @@ export default defineConfig({
       exclude: ['lib/**/*-frontend.ts', 'lib/utils/storage/*'],
     }),
   ],
-  resolve: {
-    alias: [
-      {
-        find: '@lib/',
-        replacement: path.resolve(process.cwd(), 'lib') + '/',
-      },
-    ],
-  },
   build: {
     copyPublicDir: false,
     lib: {
