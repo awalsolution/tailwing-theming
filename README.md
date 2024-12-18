@@ -64,12 +64,14 @@ const themeManager = new ThemeManager({
       colors: {
         background: { DEFAULT: '#FFFFFF' },
         foreground: { DEFAULT: '#000000' },
+        primary: { DEFAULT: '#0000FF', light: '#0096FF' },
       },
     },
     'dark-theme': {
       colors: {
         background: { DEFAULT: '#000000' },
         foreground: { DEFAULT: '#FFFFFF' },
+        primary: { DEFAULT: '#0000FF', light: '#0096FF' },
       },
     },
   },
