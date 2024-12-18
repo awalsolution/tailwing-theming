@@ -28,9 +28,9 @@
 Install the package via your package manager:
 
 ```bash
-yarn add tailwindcss-multi-theme
+yarn add @awal-solution/tailwind-theming
 # or
-npm install tailwindcss-multi-theme
+npm install @awal-solution/tailwind-theming
 ```
 
 ---
@@ -43,7 +43,7 @@ Add the `themePlugin` to your TailwindCSS configuration:
 
 ```javascript
 // tailwind.config.js|ts
-import { themePlugin } from 'tailwindcss-multi-theme'
+import { themePlugin } from '@awal-solution/tailwind-theming'
 
 export default {
   content: ['./src/**/*.{html,js,ts}'],
@@ -56,7 +56,7 @@ export default {
 Create a `ThemeManager` instance and define your themes:
 
 ```typescript
-import { ThemeManager } from 'tailwindcss-multi-theme'
+import { ThemeManager } from '@awal-solution/tailwind-theming'
 
 const themeManager = new ThemeManager({
   themes: {
@@ -176,7 +176,7 @@ The `themePlugin` provides the following options:
 Example usage in TailwindCSS:
 
 ```javascript
-import { themePlugin } from 'tailwindcss-multi-theme'
+import { themePlugin } from '@awal-solution/tailwind-theming'
 import { themeManager } from './themeManager'
 
 export default {
