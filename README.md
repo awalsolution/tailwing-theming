@@ -1,29 +1,21 @@
 <div align="left">
- <h1>tailwind-theming</h1>
+ <h1>Tailwind theming</h1>
   <p>The <b>TailwindCSS Multi-Theming Plugin</b> is a utility for creating and managing multiple themes in your TailwindCSS-based projects. With this library, you can define, add, update, and remove themes dynamically while keeping your configuration clean and extensible.</p>
-  <div>
+  <div >
     <img src="https://img.shields.io/badge/-TypeScript-black?style=for-the-badge&logoColor=white&logo=typescript&color=3178c6" alt="typescript" />
     <img src="https://img.shields.io/badge/-Tailwind_CSS-black?style=for-the-badge&logoColor=white&logo=tailwindcss&color=06B6D4" alt="tailwindcss" />
   </div>
-
 <hr/>
 </div>
 
-````markdown
-# TailwindCSS Multi-Theming Plugin
-
-The **TailwindCSS Multi-Theming Plugin** is a utility for creating and managing multiple themes in your TailwindCSS-based projects. With this library, you can define, add, update, and remove themes dynamically while keeping your configuration clean and extensible.
-
----
-
-## Features
+## Features:
 
 - **Dynamic Theme Management**:
   - Add, update, and remove themes programmatically.
 - **Flexible Theme Configuration**:
   - Define themes using `extend` to seamlessly integrate with TailwindCSS.
 - **Data Attributes and Class Selectors**:
-  - Apply themes via `data-theme` attributes or class selectors.
+  - Apply themes via `data-theme` attributes.
 - **Default Theme Support**:
   - Specify a default theme to be applied globally.
 - **Customizable Media Queries**:
@@ -31,7 +23,7 @@ The **TailwindCSS Multi-Theming Plugin** is a utility for creating and managing 
 
 ---
 
-## Installation
+## Installation:
 
 Install the package via your package manager:
 
@@ -40,18 +32,19 @@ yarn add tailwindcss-multi-theme
 # or
 npm install tailwindcss-multi-theme
 ```
+
 ````
 
 ---
 
-## Getting Started
+## Getting Started:
 
 ### 1. Configure TailwindCSS Plugin
 
 Add the `themePlugin` to your TailwindCSS configuration:
 
 ```javascript
-// tailwind.config.js
+// tailwind.config.js|ts
 import { themePlugin } from 'tailwindcss-multi-theme'
 
 export default {
@@ -85,8 +78,7 @@ const themeManager = new ThemeManager({
   defaultTheme: 'light-theme',
 })
 
-// Log available themes
-console.log(themeManager.getThemeSelectors())
+export { themeManager }
 ```
 
 ### 3. Apply Themes
@@ -187,59 +179,95 @@ Example usage in TailwindCSS:
 
 ```javascript
 import { themePlugin } from 'tailwindcss-multi-theme'
+import { themeManager } from './themeManager'
 
 export default {
   content: ['./src/**/*.{html,js,ts}'],
   plugins: [
-    themePlugin({
-      defaultTheme: {
-        colors: {
-          background: { DEFAULT: '#FFFFFF' },
-          foreground: { DEFAULT: '#000000' },
-        },
-      },
-      themes: [
-        {
-          name: 'dark-theme',
-          selectors: ['[data-theme="dark-theme"]'],
-          extend: {
-            colors: {
-              background: { DEFAULT: '#000000' },
-              foreground: { DEFAULT: '#FFFFFF' },
-            },
-          },
-        },
-      ],
-    }),
+    themePlugin(themeManager.get()),
   ],
 }
 ```
 
 ---
 
+Example CSS:
+
+```css
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+```
+
 ## Example
 
 An example setup for toggling themes in your app:
 
 ```typescript
+import './index.css'
 import { themeManager } from './themeManager'
+import { storage } from './storage'
+
+let themeNames = themeManager.getThemeSelectors()
+let currentTheme = storage.get<string>('APP_THEME') ?? Object.keys(themeNames)[0]
 
 const initializeApp = () => {
   const root = document.documentElement
-  const defaultTheme = themeManager.get().defaultTheme?.name || 'light-theme'
 
-  root.setAttribute('data-theme', defaultTheme)
+  // Apply the saved theme or system theme as default
+  root.className = currentTheme
+  root.setAttribute('data-theme', currentTheme)
+  storage.set('APP_THEME', currentTheme)
 }
 
 const toggleTheme = () => {
   const root = document.documentElement
-  const currentTheme = root.getAttribute('data-theme')
-  const nextTheme = currentTheme === 'light-theme' ? 'dark-theme' : 'light-theme'
-  root.setAttribute('data-theme', nextTheme)
+  const themeKeys = Object.keys(themeNames)
+  const currentIndex = themeKeys.findIndex((key) => key === currentTheme)
+
+  // Determine the next theme
+  const nextIndex = (currentIndex + 1) % themeKeys.length
+  currentTheme = themeKeys[nextIndex]
+
+  // Apply the new theme
+  root.className = currentTheme
+  root.setAttribute('data-theme', currentTheme)
+  storage.set('APP_THEME', currentTheme)
+
+  // Update button text to show the next theme
+  const button = document.querySelector<HTMLButtonElement>('#theme-toggle')
+  if (button) {
+    const nextTheme = themeNames[themeKeys[(nextIndex + 1) % themeKeys.length]].name
+    button.textContent = `Switch to ${nextTheme.charAt(0).toUpperCase() + nextTheme.slice(1)} Mode`
+  }
+}
+
+const renderApp = () => {
+  const app = document.querySelector<HTMLDivElement>('#app')
+  if (!app) return
+
+  app.innerHTML = `
+    <div class="min-h-screen flex gap-4 items-center justify-center bg-background text-foreground">
+      <button id="theme-toggle" class="px-4 py-2 bg-primary text-white rounded">
+        Switch to ${Object.keys(themeNames)[0]} Mode
+      </button>
+      <h1 class="border-b border-divider">
+        Hello, TailwindCSS Theme Toggling!
+      </h1>
+    </div>
+  `
+
+  // Attach event listener for the theme toggle button
+  const button = document.querySelector<HTMLButtonElement>('#theme-toggle')
+  if (button) {
+    button.addEventListener('click', toggleTheme)
+  }
 }
 
 initializeApp()
-document.querySelector('#theme-toggle').addEventListener('click', toggleTheme)
+renderApp()
+
 ```
 
 ---
@@ -258,6 +286,5 @@ Contributions are welcome! If you find a bug or want to suggest a feature, pleas
 
 Happy coding! 🎉
 
-```
-
-```
+---
+````
