@@ -14,7 +14,7 @@
   - Add, update, and remove themes programmatically.
 - **Flexible Theme Configuration**:
   - Define themes using `extend` to seamlessly integrate with TailwindCSS.
-- **Data Attributes and Class Selectors**:
+- **Data Attributes Selectors**:
   - Apply themes via `data-theme` attributes.
 - **Default Theme Support**:
   - Specify a default theme to be applied globally.
