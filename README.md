@@ -33,8 +33,6 @@ yarn add tailwindcss-multi-theme
 npm install tailwindcss-multi-theme
 ```
 
-````
-
 ---
 
 ## Getting Started:
@@ -183,9 +181,7 @@ import { themeManager } from './themeManager'
 
 export default {
   content: ['./src/**/*.{html,js,ts}'],
-  plugins: [
-    themePlugin(themeManager.get()),
-  ],
+  plugins: [themePlugin(themeManager.get())],
 }
 ```
 
@@ -197,7 +193,6 @@ Example CSS:
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
-
 ```
 
 ## Example
@@ -206,8 +201,8 @@ An example setup for toggling themes in your app:
 
 ```typescript
 import './index.css'
-import { themeManager } from './themeManager'
 import { storage } from './storage'
+import { themeManager } from './themeManager'
 
 let themeNames = themeManager.getThemeSelectors()
 let currentTheme = storage.get<string>('APP_THEME') ?? Object.keys(themeNames)[0]
@@ -267,7 +262,6 @@ const renderApp = () => {
 
 initializeApp()
 renderApp()
-
 ```
 
 ---
@@ -287,4 +281,3 @@ Contributions are welcome! If you find a bug or want to suggest a feature, pleas
 Happy coding! 🎉
 
 ---
-````
