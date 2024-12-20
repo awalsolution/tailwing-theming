@@ -270,7 +270,7 @@ renderApp()
 
 ## License
 
-This project is licensed under the MIT License.
+This library is open-source and licensed under the [MIT License](./LICENSE).
 
 ---
 
