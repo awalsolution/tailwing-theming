@@ -12,6 +12,7 @@ export interface ThemeConfig {
 export interface MultiThemePluginOptions {
   defaultTheme?: DefaultThemeConfig
   themes?: ThemeConfig[]
+  utilities?: Record<string, any>
 }
 
 export interface AddThemeType {
@@ -25,6 +26,7 @@ export interface Theme extends TailwindExtension {
 
 export interface ThemeManagerType<T extends ThemeConfig['name'] = ThemeConfig['name']> {
   themes: Record<string, Theme>
+  utilities?: Record<string, any>
   defaultTheme?: Extract<T, string>
 }
 

@@ -52,11 +52,19 @@ const addThemeStyles = (themes: ThemeConfig[], api: PluginAPI): void => {
   }
 }
 
+const addThemeUtilities = (utilities: Record<string, any>, api: PluginAPI) => {
+  const { addUtilities } = api
+  addUtilities(utilities)
+}
+
 const themePlugin = plugin.withOptions<Partial<MultiThemePluginOptions>>(
   (options) => (api) => {
     const themes = getThemesFromOptions(options)
     addThemeVariants(themes, api)
     addThemeStyles(themes, api)
+    if (options?.utilities) {
+      addThemeUtilities(options.utilities, api)
+    }
   },
   (options) => {
     const extension = resolveThemeExtensionsAsTailwindExtension(getThemesFromOptions(options))
