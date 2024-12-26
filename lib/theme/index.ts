@@ -12,7 +12,7 @@ class ThemeManager {
   private default: DefaultThemeName
   private themes: MultiThemePluginOptions
 
-  constructor({ themes = {}, defaultTheme }: ThemeManagerType) {
+  constructor({ themes = {}, defaultTheme, utilities }: ThemeManagerType) {
     if (!Object.keys(themes).length) {
       throw new Error('No themes provided.')
     }
@@ -55,6 +55,7 @@ class ThemeManager {
     this.themes = {
       defaultTheme: defaultThemeObject,
       themes: processedThemes,
+      utilities: utilities,
     }
   }
 
