@@ -278,6 +278,32 @@ This library is open-source and licensed under the [MIT License](./LICENSE).
 
 Contributions are welcome! If you find a bug or want to suggest a feature, please open an issue or submit a pull request.
 
+## Commits
+
+### Patch release
+
+```bash
+
+fix(theme): correct issue with theme manager
+
+```
+
+### Minor release
+
+```bash
+
+feat(utils): add utility functions for theming
+
+```
+
+### Major release
+
+```bash
+
+fix!: update API endpoints (BREAKING CHANGE: endpoint changes)
+
+```
+
 ---
 
 Happy coding! 🎉
