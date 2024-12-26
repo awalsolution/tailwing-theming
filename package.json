@@ -1,6 +1,6 @@
 {
   "name": "@awal-solution/tailwind-theming",
-  "version": "0.0.5",
+  "version": "0.0.5-development",
   "type": "module",
   "author": {
     "name": "Muneeb Mughal",
@@ -31,6 +31,9 @@
   "files": [
     "dist"
   ],
+  "publishConfig": {
+    "access": "public"
+  },
   "scripts": {
     "dev": "vite",
     "build": "tsc && vite build",
