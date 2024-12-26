@@ -1,0 +1,30 @@
+name: Release
+
+on:
+  push:
+    branches:
+      - main
+
+permissions:
+  contents: write
+  issues: write
+  pull-requests: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 'lts/*'
+      - run: npm ci
+      - run: npm install
+      - run: npm run test
+      - run: npm run build
+      - run: npm audit signatures
+      - run: npm realese
+        env:
+          GITHUB_TOKEN: ${{ serets.GITHUB_TOKEN }}
+          NPM_TOKEN: ${{ serets.NPM_TOKEN }}
+      - run: npx sementic:release
