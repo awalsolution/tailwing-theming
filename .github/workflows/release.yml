@@ -25,6 +25,6 @@ jobs:
       - run: npm audit signatures
       - run: npm realese
         env:
-          GITHUB_TOKEN: ${{ serets.GITHUB_TOKEN }}
+          #   GITHUB_TOKEN: ${{ serets.GITHUB_TOKEN }}
           NPM_TOKEN: ${{ serets.NPM_TOKEN }}
       - run: npx sementic:release
