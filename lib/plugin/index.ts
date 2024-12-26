@@ -1,4 +1,4 @@
-import plugin from 'tailwindcss/plugin'
+import * as plugin from 'tailwindcss/plugin'
 import { PluginAPI } from 'tailwindcss/types/config'
 import { MultiThemePluginOptions, ThemeConfig } from '../types'
 import { defaultThemeName, getThemesFromOptions } from '../utils/options'
@@ -53,12 +53,12 @@ const addThemeStyles = (themes: ThemeConfig[], api: PluginAPI): void => {
 }
 
 const addThemeUtilities = (utilities: Record<string, any>, api: PluginAPI) => {
-  const { addUtilities } = api
+  const { addUtilities } = api as PluginAPI
   addUtilities(utilities)
 }
 
 const themePlugin = plugin.withOptions<Partial<MultiThemePluginOptions>>(
-  (options) => (api) => {
+  (options: Partial<MultiThemePluginOptions>) => (api: PluginAPI) => {
     const themes = getThemesFromOptions(options)
     addThemeVariants(themes, api)
     addThemeStyles(themes, api)
@@ -66,7 +66,7 @@ const themePlugin = plugin.withOptions<Partial<MultiThemePluginOptions>>(
       addThemeUtilities(options.utilities, api)
     }
   },
-  (options) => {
+  (options: Partial<MultiThemePluginOptions>) => {
     const extension = resolveThemeExtensionsAsTailwindExtension(getThemesFromOptions(options))
     return {
       theme: {
