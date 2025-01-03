@@ -4,14 +4,6 @@ on:
   push:
     branches:
       - main
-      - develop
-      - pre-release
-
-  pull_request:
-    branches:
-      - main
-      - develop
-      - pre-release
 
 permissions:
   contents: write
@@ -47,8 +39,9 @@ jobs:
         run: npm audit signatures
 
       - name: Publish Package on NPM
-        if: ${{ github.ref_name == 'main' || github.ref_name == 'pre-release' }}
+        if: ${{ github.ref_name == 'main' }}
         env:
+          CI: true
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
         run: npx semantic-release

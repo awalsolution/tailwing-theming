@@ -1,6 +1,6 @@
 import { TailwindExtension } from '../config'
 
-export type DefaultThemeConfig = Omit<ThemeConfig, 'name' | 'selectors' | 'mediaQuery'>
+export type DefaultThemeConfig = Omit<ThemeConfig, 'selectors' | 'mediaQuery'>
 
 export interface ThemeConfig {
   name: string
