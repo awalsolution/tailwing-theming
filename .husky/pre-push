@@ -1,0 +1,9 @@
+if [ "$CI" = "true" ]; then
+  echo "Skipping pre-push hooks in CI..."
+  exit 0
+fi
+
+echo "Running pre-push validations..."
+
+yarn run build
+yarn run test

@@ -13,17 +13,13 @@ class ThemeManager {
   private themes: MultiThemePluginOptions
 
   constructor({ themes = {}, defaultTheme, utilities }: ThemeManagerType) {
-    if (!Object.keys(themes).length) {
-      throw new Error('No themes provided.')
-    }
+    if (!Object.keys(themes).length) throw new Error('No themes provided.')
 
     const createThemes: { name: string; extend: TailwindExtension }[] = []
 
     Object.entries(themes).reduce(
       (acc, [key, value]) => {
-        if (!key.match(/theme$/i)) {
-          throw new Error('Object keys must contain -theme suffix')
-        }
+        this.validateThemeName(key)
 
         const updatedTheme = {
           name: key,
@@ -38,9 +34,7 @@ class ThemeManager {
 
     this.default = defaultTheme ? defaultTheme : createThemes[0]?.name
 
-    if (!this.default) {
-      throw new Error('No default theme could be determined.')
-    }
+    if (!this.default) throw new Error('No default theme could be determined.')
 
     const defaultThemeObject = createThemes.find((theme) => theme.name === this.default) ?? createThemes[0]
 
@@ -59,15 +53,99 @@ class ThemeManager {
     }
   }
 
+  private deepMerge<T extends Record<string, any>>(target: Partial<T>, source: Partial<T>): T {
+    if (typeof target !== 'object' || target === null) {
+      return source as T
+    }
+
+    if (typeof source !== 'object' || source === null) {
+      return target as T
+    }
+
+    const result = (Array.isArray(target) ? [...target] : { ...target }) as Partial<T>
+
+    for (const key of Object.keys(source) as Array<keyof T>) {
+      const sourceValue = source[key]
+      const targetValue = target[key]
+
+      if (sourceValue && typeof sourceValue === 'object' && !Array.isArray(sourceValue)) {
+        result[key] = this.deepMerge(targetValue as Partial<T[keyof T]>, sourceValue as Partial<T[keyof T]>)
+      } else {
+        result[key] = sourceValue
+      }
+    }
+
+    return result as T
+  }
+
+  /**
+   * Validate theme name.
+   * @param themeName - The theme name to validate
+   */
+
+  private validateThemeName(themeName: DefaultThemeName) {
+    if (!themeName.match(/theme$/i))
+      throw new Error(`Object keys must contain theme suffix example: "${themeName}-theme" or "${themeName}Theme"`)
+  }
+
   /**
    * Find a theme by name.
    * @param themeName - The theme name to find
    */
 
   private find(themeName: DefaultThemeName): DefaultThemeConfig | ThemeConfig | null {
-    const checkDefault = this.default === themeName && this.themes['defaultTheme']
+    const checkDefault =
+      this.default === themeName && this.themes.defaultTheme?.name === themeName ? this.themes.defaultTheme : null
     const checkThemes = this.themes['themes']?.find((t) => t.name === themeName)
-    return checkDefault || checkThemes || null
+    if (checkDefault) return checkDefault
+    if (checkThemes) return checkThemes
+    return null
+  }
+
+  /**
+   * Set default theme.
+   * @param themeName - The theme name to set new default theme
+   */
+
+  public defaultTheme(themeName: DefaultThemeName) {
+    this.validateThemeName(themeName)
+
+    const find = this.find(themeName)
+
+    if (!find) throw new Error(`Theme "${themeName}" does not exists.`)
+
+    if (this.default === find.name) return
+
+    this.default = themeName
+
+    const previousDefaultTheme = this.themes.defaultTheme
+
+    const otherThemes = this.themes.themes?.filter((t) => t.name !== themeName) ?? []
+
+    otherThemes.push({
+      name: previousDefaultTheme?.name ?? '',
+      selectors: [`[data-theme="${previousDefaultTheme?.name}"]`],
+      extend: previousDefaultTheme?.extend ?? {},
+    })
+
+    const createNewThemes: MultiThemePluginOptions = {
+      defaultTheme: { extend: find.extend, name: find.name },
+      themes: otherThemes,
+    }
+
+    this.themes = {
+      ...createNewThemes,
+      utilities: this.themes.utilities,
+    }
+  }
+
+  /**
+   * Set default theme.
+   * @param utilities - utilities classes for tailwind css it will merge previous and new classes
+   */
+
+  public addUtilities(utilities: Record<string, any>) {
+    this.themes.utilities = { ...this.themes.utilities, ...utilities }
   }
 
   /**
@@ -99,13 +177,12 @@ class ThemeManager {
    */
 
   public add(theme: AddThemeType): void {
-    if (!theme.name.match(/theme$/i)) {
-      throw new Error('Object keys must contain -theme suffix')
-    }
+    this.validateThemeName(theme.name)
+
     const find = this.find(theme.name)
-    if (find) {
-      throw new Error(`Theme "${theme.name}" already exists.`)
-    }
+
+    if (find) throw new Error(`Theme "${theme.name}" already exists.`)
+
     const newTheme: ThemeConfig = {
       name: theme.name,
       selectors: [`[data-theme="${theme.name}"]`],
@@ -121,31 +198,22 @@ class ThemeManager {
    */
 
   public update(themeName: string, properties: Partial<TailwindExtension>): void {
-    if (!themeName.match(/theme$/i)) {
-      throw new Error('Object keys must contain -theme suffix')
-    }
+    this.validateThemeName(themeName)
+
     const find = this.find(themeName)
-    if (!find) {
-      throw new Error(`Theme "${themeName}" does not exist.`)
+
+    if (!find) throw new Error(`Theme "${themeName}" does not exists.`)
+
+    const updatedTheme = {
+      ...find,
+      extend: this.deepMerge(find.extend ?? {}, properties),
     }
 
     if (themeName === this.default) {
-      this.themes.defaultTheme = {
-        ...this.themes.defaultTheme,
-        extend: {
-          ...this.themes.defaultTheme?.extend,
-          ...properties,
-        },
-      }
+      this.themes.defaultTheme = updatedTheme
     } else {
-      this.themes.themes?.forEach((t) => {
-        if (t.name === themeName) {
-          t.extend = {
-            ...t.extend,
-            ...properties,
-          }
-        }
-      })
+      const otherThemes = this.themes.themes?.filter((t) => t.name !== themeName) ?? []
+      this.themes.themes = [...otherThemes, updatedTheme]
     }
   }
 
@@ -156,9 +224,8 @@ class ThemeManager {
 
   public remove(themeName: DefaultThemeName): void {
     const index = this.themes.themes?.findIndex((t) => t.name === themeName)
-    if (index === undefined || index === -1) {
-      throw new Error(`Theme "${themeName}" does not exist.`)
-    }
+
+    if (index === undefined || index === -1) throw new Error(`Theme "${themeName}" does not exist.`)
     this.themes.themes?.splice(index, 1)
   }
 }
