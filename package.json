@@ -40,7 +40,7 @@
     "build": "tsc && vite build",
     "lint": "eslint 'src/**/*.{ts,js}'",
     "test": "jest --config jest.config.ts",
-    "sementic-release": "sementic-release",
+    "semantic-release": "semantic-release",
     "prettier:fix": "npx prettier --write ./",
     "prepare": "husky"
   },
@@ -84,5 +84,9 @@
     "just-unique": "^4.2.0",
     "lodash.merge": "^4.6.2",
     "lodash.mergewith": "^4.6.2"
+  },
+  "lint-staged": {
+    "**/*.{js,jsx,tx,tsx}": "eslint --fix",
+    "**/*": "prettier --write --ignore-unknown"
   }
 }
