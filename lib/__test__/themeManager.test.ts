@@ -78,7 +78,7 @@ describe("ThemeManager", () => {
           primary: "purple",
         },
       });
-    }).toThrow("Theme \"non-existent-theme\" does not exist.");
+    }).toThrow("Theme \"non-existent-theme\" does not exists.");
   });
 
   test("should remove an existing theme", () => {
@@ -97,6 +97,61 @@ describe("ThemeManager", () => {
     const selectors = themeManager.getThemeSelectors();
     expect(selectors["dark-theme"].selectors).toEqual(["[data-theme=\"dark-theme\"]"]);
   });
+
+  test("should update the default theme to an existing theme", () => {
+    themeManager.defaultTheme("dark-theme");
+    const themes = themeManager.get();
+    expect(themes.defaultTheme?.name).toBe("dark-theme");
+    expect(themes.themes?.some((theme) => theme.name === "light-theme")).toBe(true);
+    expect(themes.themes?.some((theme) => theme.name === "custom-theme")).toBe(false);
+  });
+
+  test("should throw an error for a non-existent theme", () => {
+    expect(() => themeManager.defaultTheme("non-existent-theme")).toThrow(
+      'Theme "non-existent-theme" does not exists.'
+    );
+  });
+
+  test("should throw an error for invalid theme name", () => {
+    expect(() => themeManager.defaultTheme("invalidName")).toThrow(
+      'Object keys must contain theme suffix example: "invalidName-theme" or "invalidNameTheme"'
+    );
+  });
+
+  test("should not change anything if the theme is already default", () => {
+    themeManager.defaultTheme("light-theme");
+    const themes = themeManager.get();
+    expect(themes.defaultTheme?.name).toBe("light-theme");
+    expect(themes.themes?.length).toBe(1);
+  });
+
+  test('should switch default theme and move previous default to themes', () => {
+    themeManager.defaultTheme('dark-theme');
+    const themes = themeManager.get();
+    expect(themes.defaultTheme?.name).toBe('dark-theme');
+    expect(themes.themes?.some(t => t.name === 'light-theme')).toBe(true);
+  });
+
+  test('should deep merge nested objects correctly', () => {
+    const result = themeManager['deepMerge'](
+      { colors: { primary: { DEFAULT: 'blue', 100: 'lightblue', 200:'green' } } },
+      { colors: { primary: { 200: 'darkblue', DEFAULT: 'navy', 100: 'lightblue' } } }
+    );
+    expect(result).toEqual({
+      colors: { primary: { DEFAULT: 'navy', 100: 'lightblue', 200: 'darkblue' } },
+    });
+  });
+
+  test('should handle undefined utilities gracefully', () => {
+    themeManager.addUtilities({});
+    expect(themeManager.get().utilities).toEqual({});
+  });
+  test('should throw error if trying to remove non-existent theme', () => {
+    expect(() => themeManager.remove('non-existent-theme')).toThrow(
+      'Theme "non-existent-theme" does not exist.'
+    );
+  });
+
 });
 
 describe('ThemeManager edge cases', () => {
@@ -110,7 +165,7 @@ describe('ThemeManager edge cases', () => {
       defaultTheme: 'light-theme',
     });
     expect(() => manager.update('non-existent-theme', { colors: { primary: '#000' } }))
-      .toThrowError('Theme "non-existent-theme" does not exist.');
+      .toThrowError('Theme "non-existent-theme" does not exists.');
   });
 
   test('should remove non-existent theme gracefully', () => {
@@ -118,8 +173,7 @@ describe('ThemeManager edge cases', () => {
       themes: { 'light-theme': { colors: { background: '#fff' } } },
       defaultTheme: 'light-theme',
     });
-    expect(() => manager.remove('non-existent-theme'))
-      .toThrowError('Theme "non-existent-theme" does not exist.');
+    expect(() => manager.remove('non-existent-theme')).toThrowError('Theme "non-existent-theme" does not exist.');
   });
 
   test('should handle empty utilities gracefully', () => {
@@ -130,4 +184,22 @@ describe('ThemeManager edge cases', () => {
     });
     expect(manager.getThemeSelectors()).toBeDefined(); // Ensure no crash
   });
+  
+  test('should throw an error if themes object contains invalid keys', () => {
+    expect(() =>
+      new ThemeManager({
+        themes: { invalidKey: { colors: { background: 'white' } } },
+      })
+    ).toThrow('Object keys must contain theme suffix example: "invalidKey-theme" or "invalidKeyTheme"');
+  });
+
+  test('should set the first theme as default if defaultTheme is not provided', () => {
+    const manager = new ThemeManager({
+      themes: {
+        'custom-theme': { colors: { background: 'blue' } },
+      },
+    });
+    expect(manager.get().defaultTheme?.name).toBe('custom-theme');
+  });
+
 });
