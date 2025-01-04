@@ -9,50 +9,14 @@ import {
 } from '../types'
 
 class ThemeManager {
-  private default: DefaultThemeName
-  private themes: MultiThemePluginOptions
+  private defaultThemeName?: DefaultThemeName
+  private themesConfig?: MultiThemePluginOptions
 
-  constructor({ themes = {}, defaultTheme, utilities }: ThemeManagerType) {
-    if (!Object.keys(themes).length) throw new Error('No themes provided.')
+  constructor() {}
 
-    const createThemes: { name: string; extend: TailwindExtension }[] = []
-
-    Object.entries(themes).reduce(
-      (acc, [key, value]) => {
-        this.validateThemeName(key)
-
-        const updatedTheme = {
-          name: key,
-          extend: value,
-        }
-        createThemes.push(updatedTheme)
-        acc[key] = value
-        return acc
-      },
-      {} as Record<string, any>,
-    )
-
-    this.default = defaultTheme ? defaultTheme : createThemes[0]?.name
-
-    if (!this.default) throw new Error('No default theme could be determined.')
-
-    const defaultThemeObject = createThemes.find((theme) => theme.name === this.default) ?? createThemes[0]
-
-    const processedThemes = createThemes
-      .filter((theme) => theme.name !== this.default)
-      .map((theme) => ({
-        ...theme,
-        name: theme.name,
-        selectors: [`[data-theme="${theme.name}"]`],
-      }))
-
-    this.themes = {
-      defaultTheme: defaultThemeObject,
-      themes: processedThemes,
-      utilities: utilities,
-    }
-  }
-
+  /**
+   * Deeply merges two objects.
+   */
   private deepMerge<T extends Record<string, any>>(target: Partial<T>, source: Partial<T>): T {
     if (typeof target !== 'object' || target === null) {
       return source as T
@@ -62,7 +26,7 @@ class ThemeManager {
       return target as T
     }
 
-    const result = (Array.isArray(target) ? [...target] : { ...target }) as Partial<T>
+    const result = { ...target } as Partial<T>
 
     for (const key of Object.keys(source) as Array<keyof T>) {
       const sourceValue = source[key]
@@ -79,155 +43,159 @@ class ThemeManager {
   }
 
   /**
-   * Validate theme name.
-   * @param themeName - The theme name to validate
+   * Validates if a theme name has the required suffix.
    */
-
-  private validateThemeName(themeName: DefaultThemeName) {
-    if (!themeName.match(/theme$/i))
-      throw new Error(`Object keys must contain theme suffix example: "${themeName}-theme" or "${themeName}Theme"`)
+  private validateThemeName(themeName: DefaultThemeName): void {
+    if (!themeName.match(/theme$/i)) {
+      throw new Error(`Theme names must end with "theme" (e.g., "light-theme", "dark-theme"). Invalid name: "${themeName}".`)
+    }
   }
 
   /**
-   * Find a theme by name.
-   * @param themeName - The theme name to find
+   * Finds a theme by name.
    */
-
-  private find(themeName: DefaultThemeName): DefaultThemeConfig | ThemeConfig | null {
-    const checkDefault =
-      this.default === themeName && this.themes.defaultTheme?.name === themeName ? this.themes.defaultTheme : null
-    const checkThemes = this.themes['themes']?.find((t) => t.name === themeName)
-    if (checkDefault) return checkDefault
-    if (checkThemes) return checkThemes
-    return null
+  private findTheme(themeName: DefaultThemeName): DefaultThemeConfig | ThemeConfig | null {
+    if (this.defaultThemeName === themeName) {
+      return this.themesConfig?.defaultTheme ?? null
+    }
+    return this.themesConfig?.themes?.find((t) => t.name === themeName) ?? null
   }
 
   /**
-   * Set default theme.
-   * @param themeName - The theme name to set new default theme
+   * Initializes the ThemeManager with themes and utilities.
    */
+  public init({ themes = {}, defaultTheme, utilities }: ThemeManagerType): void {
+    if (!Object.keys(themes).length) {
+      throw new Error('No themes provided.')
+    }
 
-  public defaultTheme(themeName: DefaultThemeName) {
+    const processedThemes: ThemeConfig[] = []
+
+    for (const [key, value] of Object.entries(themes)) {
+      this.validateThemeName(key)
+      processedThemes.push({ name: key, selectors: [`[data-theme="${key}"]`], extend: value })
+    }
+
+    this.defaultThemeName = defaultTheme || processedThemes[0]?.name
+
+    if (!this.defaultThemeName) {
+      throw new Error('No default theme could be determined.')
+    }
+
+    const defaultThemeConfig = processedThemes.find((t) => t.name === this.defaultThemeName) ?? processedThemes[0]
+
+    this.themesConfig = {
+      defaultTheme: defaultThemeConfig,
+      themes: processedThemes.filter((t) => t.name !== this.defaultThemeName),
+      utilities: utilities || {},
+    }
+  }
+
+  /**
+   * Sets the default theme.
+   */
+  public setDefaultTheme(themeName: DefaultThemeName): void {
     this.validateThemeName(themeName)
 
-    const find = this.find(themeName)
-
-    if (!find) throw new Error(`Theme "${themeName}" does not exists.`)
-
-    if (this.default === find.name) return
-
-    this.default = themeName
-
-    const previousDefaultTheme = this.themes.defaultTheme
-
-    const otherThemes = this.themes.themes?.filter((t) => t.name !== themeName) ?? []
-
-    otherThemes.push({
-      name: previousDefaultTheme?.name ?? '',
-      selectors: [`[data-theme="${previousDefaultTheme?.name}"]`],
-      extend: previousDefaultTheme?.extend ?? {},
-    })
-
-    const createNewThemes: MultiThemePluginOptions = {
-      defaultTheme: { extend: find.extend, name: find.name },
-      themes: otherThemes,
+    const theme = this.findTheme(themeName)
+    if (!theme) {
+      throw new Error(`Theme "${themeName}" does not exist.`)
     }
 
-    this.themes = {
-      ...createNewThemes,
-      utilities: this.themes.utilities,
+    if (this.defaultThemeName === themeName) return
+
+    const previousDefault = this.themesConfig?.defaultTheme
+
+    this.defaultThemeName = themeName
+
+    const newThemes = this.themesConfig?.themes?.filter((t) => t.name !== themeName) ?? []
+    if (previousDefault) {
+      newThemes.push({
+        name: previousDefault.name,
+        selectors: [`[data-theme="${previousDefault.name}"]`],
+        extend: previousDefault.extend,
+      })
+    }
+
+    this.themesConfig = {
+      defaultTheme: theme,
+      themes: newThemes,
+      utilities: this.themesConfig?.utilities,
     }
   }
 
   /**
-   * Set default theme.
-   * @param utilities - utilities classes for tailwind css it will merge previous and new classes
+   * Adds a new theme.
    */
 
-  public addUtilities(utilities: Record<string, any>) {
-    this.themes.utilities = { ...this.themes.utilities, ...utilities }
-  }
-
-  /**
-   * Get all available themes.
-   * @returns MultiThemePluginOptions containing the default theme and additional themes.
-   */
-
-  public get(): MultiThemePluginOptions {
-    return this.themes
-  }
-
-  /**
-   * Get available themes with their names and selectors.
-   * @returns An object of available themes
-   */
-
-  public getThemeSelectors(): Record<string, { name: string; selectors?: string[] }> {
-    const availableThemes: Record<string, { name: string; selectors?: string[] }> = {}
-    availableThemes['default'] = { name: this.default ?? '' }
-    this.themes.themes?.forEach((theme) => {
-      availableThemes[theme.name] = { name: theme.name, selectors: theme.selectors }
-    })
-    return availableThemes
-  }
-
-  /**
-   * Add a new theme.
-   * @param theme - The theme to add
-   */
-
-  public add(theme: AddThemeType): void {
+  public addTheme(theme: AddThemeType): void {
     this.validateThemeName(theme.name)
 
-    const find = this.find(theme.name)
-
-    if (find) throw new Error(`Theme "${theme.name}" already exists.`)
+    if (this.findTheme(theme.name)) {
+      throw new Error(`Theme "${theme.name}" already exists.`)
+    }
 
     const newTheme: ThemeConfig = {
       name: theme.name,
       selectors: [`[data-theme="${theme.name}"]`],
-      extend: { ...theme.theme },
+      extend: theme.theme,
     }
-    this.themes.themes?.push(newTheme)
+
+    this.themesConfig?.themes?.push(newTheme)
   }
 
   /**
-   * Update an existing theme.
-   * @param themeName - The name of the theme to update
-   * @param properties - The properties to update
+   * Updates an existing theme.
    */
-
-  public update(themeName: string, properties: Partial<TailwindExtension>): void {
+  public updateTheme(themeName: string, properties: Partial<TailwindExtension>): void {
     this.validateThemeName(themeName)
 
-    const find = this.find(themeName)
-
-    if (!find) throw new Error(`Theme "${themeName}" does not exists.`)
-
-    const updatedTheme = {
-      ...find,
-      extend: this.deepMerge(find.extend ?? {}, properties),
+    const theme = this.findTheme(themeName)
+    if (!theme) {
+      throw new Error(`Theme "${themeName}" does not exist.`)
     }
 
-    if (themeName === this.default) {
-      this.themes.defaultTheme = updatedTheme
+    const updatedTheme = { ...theme, extend: this.deepMerge(theme.extend ?? {}, properties) }
+
+    if (themeName === this.defaultThemeName) {
+      this.themesConfig!.defaultTheme = updatedTheme
     } else {
-      const otherThemes = this.themes.themes?.filter((t) => t.name !== themeName) ?? []
-      this.themes.themes = [...otherThemes, updatedTheme]
+      const updatedThemes = this.themesConfig?.themes?.filter((t) => t.name !== themeName) ?? []
+      updatedThemes.push(updatedTheme)
+      this.themesConfig!.themes = updatedThemes
     }
   }
 
   /**
-   * Remove a theme by name.
-   * @param themeName - The name of the theme to remove
+   * Removes a theme by name.
    */
 
-  public remove(themeName: DefaultThemeName): void {
-    const index = this.themes.themes?.findIndex((t) => t.name === themeName)
+  public removeTheme(themeName: DefaultThemeName): void {
+    const themeIndex = this.themesConfig?.themes?.findIndex((t) => t.name === themeName)
 
-    if (index === undefined || index === -1) throw new Error(`Theme "${themeName}" does not exist.`)
-    this.themes.themes?.splice(index, 1)
+    if (themeIndex === undefined || themeIndex < 0) {
+      throw new Error(`Theme "${themeName}" does not exist.`)
+    }
+
+    this.themesConfig?.themes?.splice(themeIndex, 1)
+  }
+
+  /**
+   * Adds utility classes for Tailwind CSS.
+   */
+  public addUtilities(utilities: Record<string, any>): void {
+    this.themesConfig!.utilities = { ...this.themesConfig?.utilities, ...utilities }
+  }
+
+  /**
+   * Retrieves all themes.
+   */
+
+  public getThemes(): MultiThemePluginOptions {
+    if (!this.themesConfig) throw new Error('Themes are not initialized.')
+    return this.themesConfig
   }
 }
 
-export { ThemeManager }
+const themeManager = new ThemeManager()
+export { themeManager }
