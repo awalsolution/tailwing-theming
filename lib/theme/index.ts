@@ -164,15 +164,6 @@ class ThemeManager {
   }
 
   /**
-   * Get all available themes.
-   * @returns MultiThemePluginOptions containing the default theme and additional themes.
-   */
-
-  public get(): MultiThemePluginOptions {
-    return this.themes
-  }
-
-  /**
    * Get available themes with their names and selectors.
    * @returns An object of available themes
    */
@@ -242,6 +233,15 @@ class ThemeManager {
 
     if (index === undefined || index === -1) throw new Error(`Theme "${themeName}" does not exist.`)
     this.themes.themes?.splice(index, 1)
+  }
+
+  /**
+   * Get all available themes.
+   * @returns MultiThemePluginOptions containing the default theme and additional themes.
+   */
+
+  public get(): MultiThemePluginOptions {
+    return this.themes
   }
 }
 
