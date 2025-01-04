@@ -10,9 +10,11 @@ import {
 
 class ThemeManager {
   private defaultThemeName?: DefaultThemeName
-  private themesConfig?: MultiThemePluginOptions
+  private themesConfig: MultiThemePluginOptions
 
-  constructor() {}
+  constructor() {
+    this.themesConfig = { themes: [] }
+  }
 
   /**
    * Deeply merges two objects.
@@ -192,7 +194,6 @@ class ThemeManager {
    */
 
   public getThemes(): MultiThemePluginOptions {
-    if (!this.themesConfig) throw new Error('Themes are not initialized.')
     return this.themesConfig
   }
 }
