@@ -77,9 +77,7 @@ class ThemeManager {
    */
 
   public init({ themes = {}, defaultTheme, utilities }: ThemeManagerType) {
-    if (!Object.keys(themes).length) throw new Error('No themes provided.')
-
-    const createThemes: { name: string; extend: TailwindExtension }[] = []
+    const mergedThemes: { name: string; extend: TailwindExtension }[] = []
 
     Object.entries(themes).reduce(
       (acc, [key, value]) => {
@@ -89,31 +87,32 @@ class ThemeManager {
           name: key,
           extend: value,
         }
-        createThemes.push(updatedTheme)
+        mergedThemes.push(updatedTheme)
         acc[key] = value
         return acc
       },
       {} as Record<string, any>,
     )
 
-    this.default = defaultTheme ? defaultTheme : createThemes[0]?.name
+    // Merge with existing themes
+    const existingThemes = this.themes.themes ?? []
+    const mergedProcessedThemes = [...existingThemes, ...mergedThemes]
 
-    if (!this.default) throw new Error('No default theme could be determined.')
+    this.default = defaultTheme || this.default
 
-    const defaultThemeObject = createThemes.find((theme) => theme.name === this.default) ?? createThemes[0]
+    const defaultThemeObject = mergedProcessedThemes.find((theme) => theme.name === this.default) ?? mergedProcessedThemes[0]
 
-    const processedThemes = createThemes
+    const processedThemes = mergedProcessedThemes
       .filter((theme) => theme.name !== this.default)
       .map((theme) => ({
         ...theme,
-        name: theme.name,
         selectors: [`[data-theme="${theme.name}"]`],
       }))
 
     this.themes = {
       defaultTheme: defaultThemeObject,
       themes: processedThemes,
-      utilities: utilities,
+      utilities: this.deepMerge(this.themes.utilities!, utilities || {}),
     }
   }
 
