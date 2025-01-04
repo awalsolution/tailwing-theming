@@ -25,14 +25,14 @@ describe("ThemeManager Singleton", () => {
   });
 
   test("should initialize with default and processed themes", () => {
-    const themes = themeManager.getThemes();
+    const themes = themeManager.get();
     expect(themes.defaultTheme?.name).toBe("light-theme");
     expect(themes.themes?.some((t) => t.name === "light-theme")).toBe(false);
     expect(themes.themes).toHaveLength(1);
   });
 
   test("should add a new theme", () => {
-    themeManager.addTheme({
+    themeManager.add({
       name: "custom-theme",
       theme: {
         colors: {
@@ -41,13 +41,13 @@ describe("ThemeManager Singleton", () => {
         },
       },
     });
-    const themes = themeManager.getThemes();
+    const themes = themeManager.get();
     expect(themes.themes?.some((t) => t.name === "custom-theme")).toBe(true);
   });
 
   test("should throw error when adding a theme with duplicate name", () => {
     expect(() => {
-      themeManager.addTheme({
+      themeManager.add({
         name: "light-theme",
         theme: {
           colors: {
@@ -59,12 +59,12 @@ describe("ThemeManager Singleton", () => {
   });
 
   test("should update an existing theme", () => {
-    themeManager.updateTheme("dark-theme", {
+    themeManager.update("dark-theme", {
       colors: {
         primary: "purple",
       },
     });
-    const themes = themeManager.getThemes();
+    const themes = themeManager.get();
     const updatedTheme = themes.themes?.find((t) => t.name === "dark-theme") as ThemeConfig & {
       extend: { colors: { primary: string } };
     };
@@ -73,7 +73,7 @@ describe("ThemeManager Singleton", () => {
 
   test("should throw error when updating a non-existent theme", () => {
     expect(() => {
-      themeManager.updateTheme("non-existent-theme", {
+      themeManager.update("non-existent-theme", {
         colors: {
           primary: "purple",
         },
@@ -82,38 +82,38 @@ describe("ThemeManager Singleton", () => {
   });
 
   test("should remove an existing theme", () => {
-    themeManager.removeTheme("dark-theme");
-    const themes = themeManager.getThemes();
+    themeManager.remove("dark-theme");
+    const themes = themeManager.get();
     expect(themes.themes?.some((t) => t.name === "dark-theme")).toBe(false);
   });
 
   test("should throw error when removing a non-existent theme", () => {
     expect(() => {
-      themeManager.removeTheme("non-existent-theme");
+      themeManager.remove("non-existent-theme");
     }).toThrow('Theme "non-existent-theme" does not exist.');
   });
 
   // test("should retrieve theme selectors", () => {
-  //   const selectors = themeManager.getThemeSelectors();
+  //   const selectors = themeManager.getelectors();
   //   expect(selectors["dark-theme"].selectors).toEqual(['[data-theme="dark-theme"]']);
   // });
 
   test("should update the default theme to an existing theme", () => {
-    themeManager.setDefaultTheme("dark-theme");
-    const themes = themeManager.getThemes();
+    themeManager.defaultTheme("dark-theme");
+    const themes = themeManager.get();
     expect(themes.defaultTheme?.name).toBe("dark-theme");
     expect(themes.themes?.some((theme) => theme.name === "light-theme")).toBe(true);
   });
 
-  // test("should throw an error for a non-existent theme", () => {
-  //   expect(() => themeManager.defaultTheme("non-existent-theme")).toThrow(
-  //     'Theme "non-existent-theme" does not exists.'
-  //   );
-  // });
+  test("should throw an error for a non-existent theme", () => {
+    expect(() => themeManager.defaultTheme("non-existent-theme")).toThrow(
+      'Theme "non-existent-theme" does not exists.'
+    );
+  });
 
   test("should not change anything if the theme is already default", () => {
-    themeManager.setDefaultTheme("light-theme");
-    const themes = themeManager.getThemes();
+    themeManager.defaultTheme("light-theme");
+    const themes = themeManager.get();
     expect(themes.defaultTheme?.name).toBe("light-theme");
     expect(themes.themes?.length).toBe(1);
   });
@@ -130,7 +130,7 @@ describe("ThemeManager Singleton", () => {
 
   test("should handle empty utilities gracefully", () => {
     themeManager.addUtilities({});
-    expect(themeManager.getThemes().utilities).toEqual({});
+    expect(themeManager.get().utilities).toEqual({});
   });
 });
 
@@ -141,7 +141,7 @@ describe("ThemeManager Edge Cases", () => {
 
   test("should handle update for non-existent theme gracefully", () => {
     expect(() =>
-      themeManager.updateTheme("non-existent-theme", { colors: { primary: "#000" } })
+      themeManager.update("non-existent-theme", { colors: { primary: "#000" } })
     ).toThrowError('Theme "non-existent-theme" does not exists.');
   });
 
@@ -159,6 +159,6 @@ describe("ThemeManager Edge Cases", () => {
         "custom-theme": { colors: { background: "blue" } },
       },
     });
-    expect(themeManager.getThemes().defaultTheme?.name).toBe("custom-theme");
+    expect(themeManager.get().defaultTheme?.name).toBe("custom-theme");
   });
 });
